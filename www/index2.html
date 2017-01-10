@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Index</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/all.css" type="text/css"/>
+        <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script-->
+        <script src="js/external/jquery-1.9.1.js"></script>
+        <script src="js/external/client.min.js"></script>
+        <script src="js/lib_a.js"></script>
+        <script src="navbars/navbarA/navbar.js"></script>
+        <script src="js/moduls/scrollTopController.js"></script>
+        <script src="js/modals/my_modals.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/node.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        
+        <div class="menu-container" id="menu-container"></div>
+        
+        <div class="test-div-a center-ver-hor round-corners-med drop-shadow-small">
+            
+            <div class="test-div-finger-print"></div>
+            
+            <div class="test-basic">
+                <input type="button" value="TEST MODAL" id="test-modal"> 
+            </div>
+        </div>
+        
+        <div class="spacer"></div>
+        
+        <script>
+            $(document).ready(function () {
+                //
+                includeNavbar("navbars/navbarA/navbar.html", "#menu-container");
+                //
+                //
+                //
+                node_test_basic();
+                //
+                node_test_basic_response(node_get_file_path("www","menu-mobile.png"),"Find Relative File Path:");
+                //
+                //    node_test_sql_basic("select * from articles","executeSelect");
+                //
+                defineFingerPrint();
+                //
+                $('#test-modal').click(function (){
+                    showInfoModal("Modal test","test test test","sm","warning");
+                });
+                //
+                addScrollTopListener();
+            });
+        </script>
+    </body>
+</html>

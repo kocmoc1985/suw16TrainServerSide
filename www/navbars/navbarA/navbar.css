@@ -1,0 +1,130 @@
+body{
+    margin: 0px;
+    font-size: 0;
+}
+
+.example-container{
+    background-color: lightgrey;
+    height: 75%;
+    font-size: 14pt;
+    padding-left: 10px;
+    padding-top: 20px;
+}
+
+/*The easiest way to change the width of the container is to adjust -> .menu-container ul li a{ -> font-size*/
+.menu-container{
+    background-color: white;/*#f8f8f8*/
+    display: block;
+    font-family:Helvetica Neue,Helvetica,Arial,sans-serif;/*Helvetica Neue",Helvetica,Arial,sans-serif*/
+    
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index:10;
+    -webkit-box-shadow: 0px 9px 12px -10px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 9px 12px -10px rgba(0,0,0,0.75);
+    box-shadow: 0px 9px 12px -10px rgba(0,0,0,0.75);
+}
+
+.menu-container ul li a.menu-title{
+    padding: 12px 20px;
+}
+
+.menu-container ul li a.menu-title:hover{
+    background-color: white;
+}
+
+.menu-container ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-container > ul > li{
+    display: inline-block;
+    font-size: 0;
+}
+
+.menu-container ul li a{
+    font-size: 11pt;
+    font-weight: 400;
+    padding: 15px 20px;
+    display: block;
+    background-color: white;/*#f8f8f8*/
+    text-decoration: none;
+    color: #5B4181;/*#827c7c*/
+}
+
+.menu-title{
+    font-weight: 600 !important;
+    font-size: 13pt !important;
+}
+
+.menu-container ul li a:hover{
+    background-color:#eaeaef;/*#eaeaef*/
+}
+
+
+.activeLink{
+    background-color:#e1e1e6 !important;
+}
+
+/*============================================================================*/
+
+.menu-container ul ul{
+    position: absolute;
+    padding: 0;
+    left: 0;
+    right: 0;
+    background-color: #00ffff;
+    display: none;
+}
+
+/*============================================================================*/
+/*Desktop*/
+@media(min-width: 750px){ 
+    .desktop-hide{
+        display:none !important;
+    } 
+}
+/*============================================================================*/
+
+.ul-mobile{
+    display: none !important;
+    position: relative;
+}
+
+.li-mobile-menu{
+    float: right;
+    display: block;
+}
+
+.li-mobile-menu img{
+    margin-bottom: 5px;
+}
+
+/*============================================================================*/
+@media(max-width: 750px){ 
+    .ul-mobile{
+        display: block !important;
+    }
+
+    .ul-initial{
+        display: none !important;
+    }
+
+    .mobile-hide{
+        display:none !important;
+    }
+
+}
+/*============================================================================*/
+@media(max-width: 500px){ 
+
+}
+/*============================================================================*/
+
+
+
+

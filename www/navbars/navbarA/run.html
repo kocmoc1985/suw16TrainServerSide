@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Menu</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <link rel="stylesheet" href="navbar.css" type="text/css"/>
+        <script src="navbar.js"></script>
+    </head>
+
+    <body onresize="displayViewPortWidthHeight('example-container')"> 
+
+        <script language = "javascript">
+            
+            function displayViewPortWidthHeight(elementId) {
+                document.getElementById(elementId).innerHTML = "width:" + $(document).width() + "<br>" + "height: " + $(document).height();
+            }
+            
+            $(document).ready(function () {
+                //
+                includeNavbar("navbar.html", "#menu-container");
+                //
+                addClickEventToNavBarBtn(".products-link", linkClickedTest);
+                //
+            });
+            
+            function linkClickedTest(){
+                alert("Link cliked");
+            }
+
+        </script>
+
+
+        <div class="menu-container" id="menu-container"></div>
+
+
+        <div class="example-container" id="example-container"></div>
+
+    </body>
+</html>
