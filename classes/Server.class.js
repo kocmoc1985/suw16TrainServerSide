@@ -39,42 +39,23 @@ module.exports = class Server {
 //==============================================================================
 //==============================================================================
 var messages = [];
-var responseObjects = [];
+var responseObjectsMap = new Map();
 var msgCounter = 0;
+
+
 
 this.app.post('/readMessages', function (req, res) {
      var clientId = req.body.param1;
      var timestamp = req.body.param2;
      var lastMsgNr = req.body.param3;
-     
-     var toSendMessages = getMessagesToSend(lastMsgNr);
-     
-     if(toSendMessages.length > 0){
-         res.json(toSendMessages);
-     }else{
-//         res.send('');
-     }
-     console.log("read messages: " + clientId); 
+     //
+     addResponseObject(clientId,lastMsgNr,res);
+     //
+     answer();
+     //
+     console.log("/readMessages: " + clientId);
+     console.log("/readMessages active keys: " + responseObjectsMap.keys);
 });
-
-function getMessagesToSend(lastMsgNr){
-    var toSend = [];
-    
-    messages.forEach(function(message){
-        console.log("nr: " + message.nr + " / "+ lastMsgNr);
-        if(message.nr > lastMsgNr){
-            toSend.push(message);
-        }
-    });
-    
-    return toSend;
-}
-
-function updateClientMessages(clientsMap){
-    clientsMap.each(function (){
-        
-    });
-}
 
 this.app.post('/sendMessage', function (req, res) {
     //
@@ -90,11 +71,59 @@ this.app.post('/sendMessage', function (req, res) {
                 sentby: sentBy,
                 text: text
             }
-            );
+    );
     //
-    res.end('');
-    console.log("message recieved: " + text + " / " + sentBy + " / " + msgCounter);        
+    res.end(''); // This one is obvious
+    //
+    answer();
+    //
+//    console.log("message recieved: " + text + " / " + sentBy + " / " + msgCounter);        
 });
+
+function addResponseObject(clientId,lastMsgNr,res){
+    var client = {lastmsgnr:lastMsgNr, res: res};
+    responseObjectsMap.put(clientId,client);
+}
+
+function getMessagesToSend(lastMsgNr){
+    var toSend = [];
+    //
+    if(lastMsgNr<msgCounter === false){
+        return toSend;
+    }
+    //
+    messages.forEach(function(message){
+//        console.log("nr: " + message.nr + " / "+ lastMsgNr);
+        if(message.nr > lastMsgNr){
+            toSend.push(message);
+        }
+    });
+    //
+    return toSend;
+}
+
+function answer(){
+    //
+    //
+    responseObjectsMap.each(function (key,value,i){
+        //
+//        console.log("answer(): key: " + key + " / last: " + value.lastmsgnr + " / i: " + i)
+        //
+        if(msgCounter > value.lastmsgnr){
+            //
+            var toSendMessages = getMessagesToSend(value.lastmsgnr);
+            //
+            if(toSendMessages.length > 0){
+                value.res.json(toSendMessages);
+                responseObjectsMap.remove(key);
+            }
+        }
+    });
+}
+
+//setInterval(answer,5000);
+
+
 
 
 //==============================================================================
@@ -132,6 +161,7 @@ function Map() {
     this.data = new Object();
 
     this.put = function (key, value) {
+        this.remove(key);
         if (this.data[key] == null) {
             this.keys.push(key);
         }
@@ -143,9 +173,18 @@ function Map() {
     };
 
     this.remove = function (key) {
-        this.keys.remove(key);
-        this.data[key] = null;
+//        console.log("DELETE: " + key);
+        removeAllByName(this.keys,key);
+        delete this.data[key];
+        
+        function removeAllByName(arr, name) {
+            while (arr.indexOf(name) !== -1) {
+                var index = arr.indexOf(name);
+                arr.splice(index, 1);
+            }
+        }
     };
+    
 
     this.each = function (fn) {
         if (typeof fn != 'function') {
@@ -154,6 +193,11 @@ function Map() {
         var len = this.keys.length;
         for (var i = 0; i < len; i++) {
             var k = this.keys[i];
+            if(this.data[k] === undefined){
+                console.log("data = null" + " / i: " + i + " / " + this.keys[i]);
+                console.log(this.keys);
+              continue;
+            }
             fn(k, this.data[k], i);
         }
     };

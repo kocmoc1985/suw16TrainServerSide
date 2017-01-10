@@ -8,6 +8,7 @@ $(document).ready(function () {
 function go() {
     addListenerSendBtn();
     addListenerGetBtn();
+    read();
 }
 
 function addListenerSendBtn() {
@@ -21,39 +22,34 @@ var lastMessageNr = 0;
 
 function addListenerGetBtn() {
     $("#get-btn").click(function () {
-//        var jsonMessages = nodeServerCall("readMessages", "POST", FINGER_PRINTS, new Date().getTime(), lastMessageNr, "aa", true);
-//
-//        jsonMessages.forEach(function (message) {
-//            var chatEntry = $("<div class='chat-msg'></div>");
-//            $(chatEntry).text(message.text + " / " + message.sentby + " / " + message.nr);
-//            setLastMessageNr(message.nr);
-//            $("body").append(chatEntry);
-//        });
-
-        $.ajax({
-            async: true,
-            type: 'POST',
-            dataType: 'json',
-            url: "http://localhost:3000/readMessages",
-            data: {param1: FINGER_PRINTS, param2: new Date().getTime(), param3: lastMessageNr, param4: ""},
-            success: function (jsonMessages) {
-                //
-                jsonMessages.forEach(function (message) {
-                    var chatEntry = $("<div class='chat-msg'></div>");
-                    $(chatEntry).text(message.text + " / " + message.sentby + " / " + message.nr);
-                    setLastMessageNr(message.nr);
-                    $("body").append(chatEntry);
-                });
-                //
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                
-            }
-        });
-
+        read();
     });
+}
 
-
+function read() {
+    console.log("Read!");
+    $.ajax({
+        async: true,
+        type: 'POST',
+        dataType: 'json',
+        url: "http://localhost:3000/readMessages",
+        data: {param1: FINGER_PRINTS, param2: new Date().getTime(), param3: lastMessageNr, param4: ""},
+        success: function (jsonMessages) {
+            //
+            jsonMessages.forEach(function (message) {
+                var chatEntry = $("<div class='chat-msg'></div>");
+                $(chatEntry).text(message.text + " / " + message.sentby + " / " + message.nr);
+                setLastMessageNr(message.nr);
+                $("body").append(chatEntry);
+            });
+            //
+            read();
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("connection dropped: " + errorThrown);
+            read();
+        }
+    });
 }
 
 
