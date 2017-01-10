@@ -34,238 +34,88 @@ module.exports = class Server {
 
    
     var me = this;
+    
 
 //==============================================================================
 //==============================================================================
+var messages = [];
+var responseObjects = [];
+var msgCounter = 0;
 
-this.app.post('/nodeTest', function (req, res) {
-    //
-    var param1 = req.body.param1;
-    var param2 = req.body.param2;
-    //
-    res.end("Server: Param1 = " + param1 + ", Param2 = " + param2);
-    });
-    
- //=============================================================================
- 
- var mysql      = require('mysql');
- var connectionMySql;
- 
-this.app.post('/connectMySql', function (req, res) {
-    //
-    var ip = req.body.ip;
-    var user  = req.body.user;
-    var pass = req.body.pass;
-    var db = req.body.database;
-    //
-    connectMySql(ip,user,pass,db,res);
-    //
+this.app.post('/readMessages', function (req, res) {
+     var clientId = req.body.param1;
+     var timestamp = req.body.param2;
+     var lastMsgNr = req.body.param3;
+     
+     var toSendMessages = getMessagesToSend(lastMsgNr);
+     
+     if(toSendMessages.length > 0){
+         res.json(toSendMessages);
+     }else{
+//         res.send('');
+     }
+     console.log("read messages: " + clientId); 
 });
 
-this.app.post('/executeSelect', function (req, res) {
-    //
-    var query = req.body.query;
-    //
-    executeSelect(connectionMySql,query,res);
-});
-
-//==============================================================================<
-
-var s = g.settings.SQL;
+function getMessagesToSend(lastMsgNr){
+    var toSend = [];
     
-if(s.connect === 'true'){
-    connectMySql(s.host,s.user,s.pass,s.database,null);
-} 
-
-//==============================================================================<
-
-function connectMySql(ip,user,pass,dbname,response){
-    console.log("Connecting to DB");
-    //
-      connectionMySql =  mysql.createConnection({
-      host     : ip,
-      user     : user,
-      password : pass,
-      database : dbname
-    });
-    //
-    connectionMySql.connect(function(err){
-        if(!err) {
-            console.log("Database is connected ...");
-            //           
-            //
-            if(response !== null){
-                response.end("Connection to: " + dbname + "   OK");
-            }
-            //
-        } else {
-            console.log("Error connecting database ... nn" + err);
-             if(response !== null){
-                 response.end("Connection to: " + dbname + "   Failed: " + err);
-             }
+    messages.forEach(function(message){
+        console.log("nr: " + message.nr + " / "+ lastMsgNr);
+        if(message.nr > lastMsgNr){
+            toSend.push(message);
         }
+    });
+    
+    return toSend;
+}
+
+function updateClientMessages(clientsMap){
+    clientsMap.each(function (){
+        
     });
 }
 
+this.app.post('/sendMessage', function (req, res) {
+    //
+    var sentBy = req.body.param1;
+    var text = req.body.param2;
+    //
+    msgCounter++;
+    //
+    messages.push(
+            {
+                nr:msgCounter,
+                timestamp: new Date().getTime(),
+                sentby: sentBy,
+                text: text
+            }
+            );
+    //
+    res.end('');
+    console.log("message recieved: " + text + " / " + sentBy + " / " + msgCounter);        
+});
+
+
+//==============================================================================
+//==============================================================================
 /**
- * 
+ * http://localhost:3000/testGetA/:aaaaa/:bbbbb
  */
-function executeSelect(connection,query,response){
+this.app.get('/testGetA/:message/:message2', function (req, res) {
+    var par1 = req.params.message;
+    var par2 = req.params.message2;
     //
-    console.log("Processing query:" + query);
-    //
-    connection.query(query, function(err, rows, fields) {
-    //
-    //    connection.end();
-    //
-    if (!err)
-        //
-        console.log("Query successful: " + query);
-        //
-       if(response !== null){
-            response.json(rows);
-        }
-        //
-    else
-        //
-        console.log('Error while performing Query:' + query);
-        //
-       if(response !== null){
-            response.end('Error while performing Query: ' + query);
-        }
-        //
-  });
-    //
-}
-
-//==============================================================================
-//==============================================================================
-
-function getFileName(clientId){
-     return "taskList_" + clientId + ".json";
- }
- 
- var fs  = require('fs');
-
-this.app.post('/writeJsonToFile', function (req, res) {
-    //
-    var text = req.body.param1;
-    var index = req.body.param2;
-    var clientId = req.body.param3;
-    //
-    var entry = {
-        table: []
-    };
-    //
-    entry.table.push({index: index,text: text,done:'false'});
-    //
-    var json = JSON.stringify(entry);
-    //
-    fs.readFile(getFileName(clientId), 'utf8', function (err, data){
-    if (err){
-         fs.writeFile(getFileName(clientId), json, 'utf8', function(err,data){
-         res.end("");
-         fs.close(2);
-        });
-    } else {
-        var obj = JSON.parse(data); //now it an object
-        obj.table.push({index: index,text: text, done:'false'}); //add some data
-        json = JSON.stringify(obj); //convert it back to json
-        fs.writeFile(getFileName(clientId), json, 'utf8', function(err, data){
-            res.end("");
-            fs.close(2);
-        });
-    }
-    //
- });
+    res.send("answer: " + par1 + " / " + par2);
 });
 
-this.app.post('/readJsonFromFile', function (req, res) {
-        //
-        var clientId = req.body.param1;
-        //
-        fs.readFile(getFileName(clientId), 'utf8', function (err, data){
-            if (err){
-             res.end("");
-             fs.close(2);
-        } else {
-            var json = JSON.parse(data);
-            res.json(json);
-        }
-    });
+
+this.app.get('/testGetB', function (req, res) {
+    var par1 = req.query.param1;
+    var par2 = req.query.param2;
+    //
+    res.send("answer: " + par1 + " / " + par2);
 });
-
-this.app.post('/deleteFile', function (req, res) {
-    //
-    var clientId = req.body.param1;
-    //
-    fs.unlink(getFileName(clientId),function (){
-        res.end("");
-        fs.close(2);
-    });
-    //
-});
-//==============================================================================
-//==============================================================================
-
-this.app.post('/getFilePath', function (req, res) {
-    //
-    var path = req.body.param1;
-    var searchedFileName = req.body.param2;
-    //
-    walk(path, function (err, results) {//process.env.HOME
-        //
-        if (err)
-            throw err;
-        //
-        for (var i = 0; i < results.length; i++) {
-//            console.log(results[i]);
-            if (stringContains(results[i], searchedFileName)) {
-               res.end(results[i].split(path + "\\")[1]);// making relative path with split
-               fs.close(2);
-            }
-        }
-    });
-    //
-});
-
-//Parallel loop - fastest
-//var fs = require('fs');
-var path = require('path');
-var walk = function (dir, done) {
-    var results = [];
-    fs.readdir(dir, function (err, list) {
-        if (err)
-            return done(err);
-        var pending = list.length;
-        if (!pending)
-            return done(null, results);
-        list.forEach(function (file) {
-            file = path.resolve(dir, file);
-            fs.stat(file, function (err, stat) {
-                if (stat && stat.isDirectory()) {
-                    walk(file, function (err, res) {
-                        results = results.concat(res);
-                        if (!--pending)
-                            done(null, results);
-                    });
-                } else {
-                    results.push(file);
-                    if (!--pending)
-                        done(null, results);
-                }
-            });
-        });
-    });
-};
-
-function stringContains(string, searched_string) {
-    if (string.indexOf(searched_string) > -1) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 //==============================================================================
 //==============================================================================
@@ -276,3 +126,57 @@ function stringContains(string, searched_string) {
   }
   
 }
+
+function Map() {
+    this.keys = new Array();
+    this.data = new Object();
+
+    this.put = function (key, value) {
+        if (this.data[key] == null) {
+            this.keys.push(key);
+        }
+        this.data[key] = value;
+    };
+
+    this.get = function (key) {
+        return this.data[key];
+    };
+
+    this.remove = function (key) {
+        this.keys.remove(key);
+        this.data[key] = null;
+    };
+
+    this.each = function (fn) {
+        if (typeof fn != 'function') {
+            return;
+        }
+        var len = this.keys.length;
+        for (var i = 0; i < len; i++) {
+            var k = this.keys[i];
+            fn(k, this.data[k], i);
+        }
+    };
+
+    this.entrys = function () {
+        var len = this.keys.length;
+        var entrys = new Array(len);
+        for (var i = 0; i < len; i++) {
+            entrys[i] = {
+                key: this.keys[i],
+                value: this.data[i]
+            };
+        }
+        return entrys;
+    };
+
+    this.isEmpty = function () {
+        return this.keys.length == 0;
+    };
+
+    this.size = function () {
+        return this.keys.length;
+    };
+}
+
+

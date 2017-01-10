@@ -1,3 +1,4 @@
+
 /**
  * Will search for given file in the "www" folder
  * @param {String} path = ex: "www"
@@ -81,7 +82,7 @@ function node_test_basic_response(response, title) {
         $(testDivResponse).append(h2);
     }
     //
-    var response_ = $("<p>"+ response + "</p>");
+    var response_ = $("<p>" + response + "</p>");
     //
     $(testDivResponse).append(response_);
     $(".test-div-a").append(testDivResponse);

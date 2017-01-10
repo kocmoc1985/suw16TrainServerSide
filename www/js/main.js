@@ -26,7 +26,10 @@ function checkDOMChange() {
 //==============================================================================
 
 function initialize() {
-    
+   var answer = nodeServerCall("testGetB","GET","test1","test2","test3",false);
+   var respDiv = $("<div class='test-div-response'></div>");
+   $(respDiv).append("<p>" + answer + "</p>" );
+   $(".test-div-a").append(respDiv);
 }
 
 
