@@ -3,6 +3,7 @@ var lastMessageNr = 0;
 
 $(document).ready(function () {
     FINGER_PRINTS = defineFingerPrint();
+    $(".my-id").text("my id: " + FINGER_PRINTS);
     go();
 });
 
@@ -14,7 +15,13 @@ function go() {
 function addListenerSendBtn() {
     $("#send-btn").click(function () {
         var message = $('.chat-text-input').val();
-        nodeServerCall("sendMessage", "POST", FINGER_PRINTS, message, "", "", false);
+        var reciever = $('.chat-send-to').val();
+        //
+        if(reciever.length === 0){
+            reciever = false;
+        }
+        //
+        nodeServerCall("sendMessage", "POST", FINGER_PRINTS, message, reciever, "", false);
         $(".chat-text-input").val('');
     });
 }
@@ -59,19 +66,18 @@ function read() {
  */
 function nodeServerCall(link, getPost, par1, par2, par3, par4, isJason) {
     //
-    var rst = $.ajax({
-        async: false,
+    $.ajax({
+        async: true,
         type: getPost,
         url: "http://localhost:3000/" + link,
-        data: {param1: par1, param2: par2, param3: par3, param4: par4}
-    }).responseText;
-    //
-    if (isJason) {
-        return JSON.parse(rst);
-    } else {
-        return rst;
-    }
-    //
+        data: {param1: par1, param2: par2, param3: par3, param4: par4},
+        success: function (data, textStatus, jqXHR) {
+           
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+             console.log("Send message failed");
+        }
+    });
 }
 
 function defineFingerPrint() {

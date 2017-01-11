@@ -61,6 +61,7 @@ this.app.post('/sendMessage', function (req, res) {
     //
     var sentBy = req.body.param1;
     var text = req.body.param2;
+    var reciever = req.body.param3;
     //
     msgCounter++;
     //
@@ -69,7 +70,8 @@ this.app.post('/sendMessage', function (req, res) {
             nr:msgCounter,
             timestamp: new Date().getTime(),
             sentby: sentBy,
-            text: text
+            text: text,
+            reciever: reciever
         }
     );
     //
@@ -77,7 +79,7 @@ this.app.post('/sendMessage', function (req, res) {
     //
     answer();
     //
-    console.log("message recieved: " + text + " / " + sentBy + " / " + msgCounter);        
+    console.log("message recieved: " + text + " / " + sentBy + " / reciever: " + reciever + " / " + msgCounter);        
 });
 
 function addResponseObject(clientId,lastMsgNr,res){
@@ -85,7 +87,7 @@ function addResponseObject(clientId,lastMsgNr,res){
     responseObjectsMap.put(clientId,client);
 }
 
-function getMessagesToSend(lastMsgNr){
+function getMessagesToSend(lastMsgNr,clientId){
     var toSend = [];
     //
     if(lastMsgNr<msgCounter === false){
@@ -94,7 +96,12 @@ function getMessagesToSend(lastMsgNr){
     //
     messages.forEach(function(message){
 //        console.log("nr: " + message.nr + " / "+ lastMsgNr);
-        if(message.nr > lastMsgNr){
+        if(message.nr > lastMsgNr && message.reciever === 'false'){
+            toSend.push(message);
+        }else if(message.nr > lastMsgNr && clientId === message.reciever){
+            message.text = "direct message: " + message.text;
+            toSend.push(message);
+        }else if(message.nr > lastMsgNr && clientId === message.sentby){
             toSend.push(message);
         }
     });
@@ -111,7 +118,7 @@ function answer(){
         //
         if(msgCounter > value.lastmsgnr){
             //
-            var toSendMessages = getMessagesToSend(value.lastmsgnr);
+            var toSendMessages = getMessagesToSend(value.lastmsgnr,key);
             //
             if(toSendMessages.length > 0){
                 value.res.json(toSendMessages);
