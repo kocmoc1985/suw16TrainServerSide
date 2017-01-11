@@ -1,4 +1,52 @@
+function nodeServerCallAsync() {
+    $.ajax({
+        async: true,
+        type: 'POST',
+        dataType: 'json',
+        url: "http://localhost:3000/readMessages",
+        data: {param1: "", param2: "", param3: "", param4: ""},
+        success: function (jsonMessages) {
+            //
+            jsonMessages.forEach(function (message) {
+                //do something
+            });
+            //
+            read();
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            //do something
+        }
+    });
+}
 
+/**
+ * To get params in GET use: "req.query.param1"
+ * To get params in POST use: "req.body.param1"
+ * @param {String} link - ex 'getUsers'
+ * @param {String} getPost - 'GET' or 'POST'
+ * @param {String} par1
+ * @param {String} par2
+ * @param {String} par3
+ * @param {String} par4
+ * @param {Boolean} isJason
+ * @returns {jqXHR.responseText}
+ */
+function nodeServerCallSync(link, getPost, par1, par2, par3, par4, isJason) {
+    //
+    var rst = $.ajax({
+        async: false,
+        type: getPost,
+        url: "http://localhost:3000/" + link,
+        data: {param1: par1, param2: par2, param3: par3, param4: par4}
+    }).responseText;
+    //
+    if (isJason) {
+        return JSON.parse(rst);
+    } else {
+        return rst;
+    }
+    //
+}
 /**
  * Will search for given file in the "www" folder
  * @param {String} path = ex: "www"

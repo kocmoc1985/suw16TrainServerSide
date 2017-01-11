@@ -39,12 +39,12 @@ module.exports = class Server {
 //==============================================================================
 //==============================================================================
 var messages = [];
-var responseObjectsMap = new Map();
+var responseObjectsMap = require('../www/js/moduls/hashmap');
 var msgCounter = 0;
 
 
-
 this.app.post('/readMessages', function (req, res) {
+     //
      var clientId = req.body.param1;
      var timestamp = req.body.param2;
      var lastMsgNr = req.body.param3;
@@ -65,12 +65,12 @@ this.app.post('/sendMessage', function (req, res) {
     msgCounter++;
     //
     messages.push(
-            {
-                nr:msgCounter,
-                timestamp: new Date().getTime(),
-                sentby: sentBy,
-                text: text
-            }
+        {
+            nr:msgCounter,
+            timestamp: new Date().getTime(),
+            sentby: sentBy,
+            text: text
+        }
     );
     //
     res.end(''); // This one is obvious
@@ -121,11 +121,6 @@ function answer(){
     });
 }
 
-//setInterval(answer,5000);
-
-
-
-
 //==============================================================================
 //==============================================================================
 /**
@@ -154,73 +149,6 @@ this.app.get('/testGetB', function (req, res) {
     });
   }
   
-}
-
-function Map() {
-    this.keys = new Array();
-    this.data = new Object();
-
-    this.put = function (key, value) {
-        this.remove(key);
-        if (this.data[key] == null) {
-            this.keys.push(key);
-        }
-        this.data[key] = value;
-    };
-
-    this.get = function (key) {
-        return this.data[key];
-    };
-
-    this.remove = function (key) {
-//        console.log("DELETE: " + key);
-        removeAllByName(this.keys,key);
-        delete this.data[key];
-        
-        function removeAllByName(arr, name) {
-            while (arr.indexOf(name) !== -1) {
-                var index = arr.indexOf(name);
-                arr.splice(index, 1);
-            }
-        }
-    };
-    
-
-    this.each = function (fn) {
-        if (typeof fn != 'function') {
-            return;
-        }
-        var len = this.keys.length;
-        for (var i = 0; i < len; i++) {
-            var k = this.keys[i];
-            if(this.data[k] === undefined){
-                console.log("data = null" + " / i: " + i + " / " + this.keys[i]);
-                console.log(this.keys);
-              continue;
-            }
-            fn(k, this.data[k], i);
-        }
-    };
-
-    this.entrys = function () {
-        var len = this.keys.length;
-        var entrys = new Array(len);
-        for (var i = 0; i < len; i++) {
-            entrys[i] = {
-                key: this.keys[i],
-                value: this.data[i]
-            };
-        }
-        return entrys;
-    };
-
-    this.isEmpty = function () {
-        return this.keys.length == 0;
-    };
-
-    this.size = function () {
-        return this.keys.length;
-    };
 }
 
 

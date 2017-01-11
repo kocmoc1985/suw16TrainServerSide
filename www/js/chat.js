@@ -1,4 +1,5 @@
 var FINGER_PRINTS;
+var lastMessageNr = 0;
 
 $(document).ready(function () {
     FINGER_PRINTS = defineFingerPrint();
@@ -7,7 +8,6 @@ $(document).ready(function () {
 
 function go() {
     addListenerSendBtn();
-    addListenerGetBtn();
     read();
 }
 
@@ -15,14 +15,7 @@ function addListenerSendBtn() {
     $("#send-btn").click(function () {
         var message = $('.chat-text-input').val();
         nodeServerCall("sendMessage", "POST", FINGER_PRINTS, message, "", "", false);
-    });
-}
-
-var lastMessageNr = 0;
-
-function addListenerGetBtn() {
-    $("#get-btn").click(function () {
-        read();
+        $(".chat-text-input").val('');
     });
 }
 
@@ -46,20 +39,11 @@ function read() {
             read();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert("connection dropped: " + errorThrown);
+//            alert("connection dropped: " + errorThrown);
             read();
         }
     });
 }
-
-
-function setLastMessageNr(nr) {
-    if (nr > lastMessageNr) {
-        lastMessageNr = nr;
-    }
-}
-
-
 
 /**
  * To get params in GET use: "req.query.param1"
@@ -68,6 +52,8 @@ function setLastMessageNr(nr) {
  * @param {String} getPost - 'GET' or 'POST'
  * @param {String} par1
  * @param {String} par2
+ * @param {String} par3
+ * @param {String} par4
  * @param {Boolean} isJason
  * @returns {jqXHR.responseText}
  */
@@ -91,4 +77,11 @@ function nodeServerCall(link, getPost, par1, par2, par3, par4, isJason) {
 function defineFingerPrint() {
     var client = new ClientJS();
     return client.getFingerprint();
+}
+
+
+function setLastMessageNr(nr) {
+    if (nr > lastMessageNr) {
+        lastMessageNr = nr;
+    }
 }
