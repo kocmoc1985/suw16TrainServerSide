@@ -21,7 +21,7 @@ function addListenerSendBtn() {
             reciever = false;
         }
         //
-        nodeServerCall("sendMessage", "POST", FINGER_PRINTS, message, reciever, "", false);
+        nodeServerCall("sendMessage", "POST", FINGER_PRINTS, message, reciever, "", true);
         $(".chat-text-input").val('');
     });
 }
@@ -67,7 +67,7 @@ function read() {
 function nodeServerCall(link, getPost, par1, par2, par3, par4, isJason) {
     //
     $.ajax({
-        async: true,
+        async: isJason,
         type: getPost,
         url: "http://localhost:3000/" + link,
         data: {param1: par1, param2: par2, param3: par3, param4: par4},
