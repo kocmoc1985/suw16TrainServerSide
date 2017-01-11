@@ -39,7 +39,7 @@ function read() {
             read();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-//            alert("connection dropped: " + errorThrown);
+            console.log("connection dropped");
             read();
         }
     });

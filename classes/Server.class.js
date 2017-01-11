@@ -39,7 +39,7 @@ module.exports = class Server {
 //==============================================================================
 //==============================================================================
 var messages = [];
-var responseObjectsMap = require('../www/js/moduls/hashmap');
+var responseObjectsMap = require('../www/js/moduls/hashmap');//
 var msgCounter = 0;
 
 
@@ -77,7 +77,7 @@ this.app.post('/sendMessage', function (req, res) {
     //
     answer();
     //
-//    console.log("message recieved: " + text + " / " + sentBy + " / " + msgCounter);        
+    console.log("message recieved: " + text + " / " + sentBy + " / " + msgCounter);        
 });
 
 function addResponseObject(clientId,lastMsgNr,res){
@@ -107,7 +107,7 @@ function answer(){
     //
     responseObjectsMap.each(function (key,value,i){
         //
-//        console.log("answer(): key: " + key + " / last: " + value.lastmsgnr + " / i: " + i)
+        console.log("answer(): key: " + key + " / last: " + value.lastmsgnr + " / i: " + i)
         //
         if(msgCounter > value.lastmsgnr){
             //

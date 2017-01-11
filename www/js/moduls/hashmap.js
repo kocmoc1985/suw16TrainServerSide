@@ -4,7 +4,7 @@ function Map() {
 
     this.put = function (key, value) {
         this.remove(key);
-        if (this.data[key] === null) {
+        if (this.data[key] == null) {
             this.keys.push(key);
         }
         this.data[key] = value;
@@ -15,6 +15,7 @@ function Map() {
     };
 
     this.remove = function (key) {
+//        console.log("DELETE: " + key);
         removeAllByName(this.keys,key);
         delete this.data[key];
         
@@ -56,7 +57,7 @@ function Map() {
     };
 
     this.isEmpty = function () {
-        return this.keys.length === 0;
+        return this.keys.length == 0;
     };
 
     this.size = function () {
