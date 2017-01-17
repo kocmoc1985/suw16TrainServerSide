@@ -35,6 +35,84 @@ module.exports = class Server {
    
     var me = this;
     
+//==============================================================================
+//==============================================================================
+
+// Test successful        
+//var mongoose = require('mongoose');
+//mongoose.connect('mongodb://localhost/test');
+//var db = mongoose.connection;
+//
+//db.once('open', function (){
+//    console.log("Connected to MongoDB");
+//});
+
+//==============================================================================
+//==============================================================================
+    
+var mongoose = require('mongoose');
+var catNames = require('./cats.json');
+mongoose.connect('mongodb://localhost/kittendb');
+var db = mongoose.connection;
+
+db.once('open', function (){
+    console.log("Connected to MongoDB");
+    connected();
+});
+
+var kittySchema = mongoose.Schema({
+    name: String
+});
+
+//declare a method
+kittySchema.methods.speak = function () {
+  var greeting = this.name
+    ? "Meow name is " + this.name
+    : "I don't have a name";
+  console.log(greeting);
+}
+
+//Compile the shema to a model
+//This must be last
+var Kitten = mongoose.model('Kitten', kittySchema);
+
+
+function connected(){
+//  createCats();
+    findCats();
+}
+
+function findCats(){
+//    Kitten.find(function(err,kittens){
+//        console.log("All kittens",kittens)
+//    });
+    
+//    Kitten.find({name:"Nibbles"},function(err, kittens){
+//        console.log("found",kittens);
+//    });
+    
+    //Find with Ladybug & Kitkat
+//    Kitten.find({name:{$in:["Ladybug","Kitkat"]}},function(err, kittens){
+//        console.log("found",kittens);
+//    });
+    
+    //Find with Ladybug or Kitkat
+    Kitten.find({$or:[{name:"Ladybug"},{name:"Kitkat"}]},function(err, kittens){
+        console.log("found",kittens);
+    });
+}
+
+function createCats(){
+    //
+  catNames.forEach(function(catName){
+    var cat = new Kitten({ name: catName});
+    cat.save(function (err, cat) {
+        if (err) return console.error(err);
+        cat.speak();
+    });
+  });
+}
+
 
 //==============================================================================
 //==============================================================================
