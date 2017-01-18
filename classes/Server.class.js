@@ -48,11 +48,13 @@ module.exports = class Server {
 //});
 
 //==============================================================================
-//==============================================================================
-    
+//==============================================================================   
+        
 var mongoose = require('mongoose');
 var catNames = require('./cats.json');
-mongoose.connect('mongodb://localhost/kittendb');
+var Kitten = require('./kitten.model')(mongoose);
+
+mongoose.connect('mongodb://10.87.0.145/test'); //mongodb://localhost/kittendb
 var db = mongoose.connection;
 
 db.once('open', function (){
@@ -60,58 +62,65 @@ db.once('open', function (){
     connected();
 });
 
-var kittySchema = mongoose.Schema({
-    name: String
-});
-
-//declare a method
-kittySchema.methods.speak = function () {
-  var greeting = this.name
-    ? "Meow name is " + this.name
-    : "I don't have a name";
-  console.log(greeting);
-}
-
-//Compile the shema to a model
-//This must be last
-var Kitten = mongoose.model('Kitten', kittySchema);
-
-
+// To make sometihing only after connecting to the DB
 function connected(){
-//  createCats();
-    findCats();
-}
-
-function findCats(){
-//    Kitten.find(function(err,kittens){
-//        console.log("All kittens",kittens)
-//    });
-    
-//    Kitten.find({name:"Nibbles"},function(err, kittens){
-//        console.log("found",kittens);
-//    });
-    
-    //Find with Ladybug & Kitkat
-//    Kitten.find({name:{$in:["Ladybug","Kitkat"]}},function(err, kittens){
-//        console.log("found",kittens);
-//    });
-    
-    //Find with Ladybug or Kitkat
-    Kitten.find({$or:[{name:"Ladybug"},{name:"Kitkat"}]},function(err, kittens){
-        console.log("found",kittens);
-    });
+  createCats();
 }
 
 function createCats(){
     //
-  catNames.forEach(function(catName){
-    var cat = new Kitten({ name: catName});
+    catNames.forEach(function(catName){
+    var cat = new Kitten({ name: catName,age: 0});
     cat.save(function (err, cat) {
-        if (err) return console.error(err);
-        cat.speak();
+    console.log("saving: " + cat.name); 
+    cat.speak();
+//        if (err) return console.error(err);
+//        if(err){
+//            console.log(err);
+//        }
+        
     });
   });
 }
+
+//http://localhost:3000/find/all
+this.app.get('/find/:message', function (req, res) {
+    var par1 = req.params.message;
+    //
+    if(par1 === 'create'){
+       createCats();
+       res.end('Create Triggered');
+    }else if(par1 === 'all'){
+        Kitten.find(function(err,kittens){
+            console.log("answer: ",kittens);
+            res.json("answer: " + kittens);
+        });
+    }else if(par1 === 'name'){
+        Kitten.find({name:"Nibbles"},function(err, kittens){
+            console.log("answer: ",kittens);
+            res.json("answer: " + kittens);
+        });
+    }else if(par1 === 'and'){
+         Kitten.find({name:{$in:["Ladybug","Kitkat"]}},function(err, kittens){
+            console.log("answer: ",kittens);
+            res.json("answer: " + kittens);
+        });
+    }else if(par1 === 'or'){
+         Kitten.find({$or:[{name:"Ladybug"},{name:"Kitkat"}]},function(err, kittens){
+            console.log("answer: ",kittens);
+            res.json("answer: " + kittens);
+        });
+    }
+    
+    //Here can the actual testings be performed
+    if(par1 === 'act'){
+        
+    }
+    //
+    
+});
+
+
 
 
 //==============================================================================
@@ -209,7 +218,7 @@ function answer(){
 //==============================================================================
 //==============================================================================
 /**
- * http://localhost:3000/testGetA/:aaaaa/:bbbbb
+ * http://localhost:3000/testGetA/aaaaa/bbbbb  (OBS! /:aaaaaa -> : not needed!!)
  */
 this.app.get('/testGetA/:message/:message2', function (req, res) {
     var par1 = req.params.message;
