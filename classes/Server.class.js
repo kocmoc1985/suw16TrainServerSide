@@ -37,18 +37,6 @@ module.exports = class Server {
     
 //==============================================================================
 //==============================================================================
-
-// Test successful        
-//var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost/test');
-//var db = mongoose.connection;
-//
-//db.once('open', function (){
-//    console.log("Connected to MongoDB");
-//});
-
-//==============================================================================
-//==============================================================================   
         
 var mongoose = require('mongoose');
 var catNames = require('./cats.json');
@@ -65,21 +53,19 @@ db.once('open', function (){
 // To make sometihing only after connecting to the DB
 function connected(){
     Model.deleteAll(function(err, resp){
+        //
        console.log("schema cleared: " + resp);
-       createCats();
+       //
+       Model.createFromJsonWithNotify(catNames,function(err,resp){
+           console.log("created: " + resp.toString());
+           
+            Model.find_({name:{$in:["Zorro","Wizard"]}},function (err,resp){
+               console.log("done: " + resp.toString()); 
+            });
+           
+       });
+       //
     });
-   
-}
-
-function createCats(){
-    //
-    catNames.forEach(function(catName){
-        var cat = new Model({ name: catName,age: 0});
-        cat.save(function (err, cat) {
-        console.log("saving: " +  cat.toString()); 
-        if (err) return console.error(err);
-    });
-  });
 }
 
 
@@ -88,9 +74,8 @@ this.app.get('/find/:message', function (req, res) {
     //
     var par1 = req.params.message;
     //
-    //Here can the actual testings be performed
     if(par1 === 'act'){
-        Model.findAll(function(err,cats){
+        Model.create("Shaddy",9,function(err,cats){
            res.json(cats);
         });
     }
