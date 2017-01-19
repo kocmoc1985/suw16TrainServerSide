@@ -52,7 +52,7 @@ module.exports = class Server {
         
 var mongoose = require('mongoose');
 var catNames = require('./cats.json');
-var Kitten = require('./kitten.model')(mongoose);
+var Model = require('./Cats.model')(mongoose);
 
 mongoose.connect('mongodb://10.87.0.145/test'); //mongodb://localhost/kittendb
 var db = mongoose.connection;
@@ -64,63 +64,38 @@ db.once('open', function (){
 
 // To make sometihing only after connecting to the DB
 function connected(){
-  createCats();
+    Model.deleteAll(function(err, resp){
+       console.log("schema cleared: " + resp);
+       createCats();
+    });
+   
 }
 
 function createCats(){
     //
     catNames.forEach(function(catName){
-    var cat = new Kitten({ name: catName,age: 0});
-    cat.save(function (err, cat) {
-    console.log("saving: " + cat.name); 
-    cat.speak();
-//        if (err) return console.error(err);
-//        if(err){
-//            console.log(err);
-//        }
-        
+        var cat = new Model({ name: catName,age: 0});
+        cat.save(function (err, cat) {
+        console.log("saving: " +  cat.toString()); 
+        if (err) return console.error(err);
     });
   });
 }
 
+
 //http://localhost:3000/find/all
 this.app.get('/find/:message', function (req, res) {
+    //
     var par1 = req.params.message;
     //
-    if(par1 === 'create'){
-       createCats();
-       res.end('Create Triggered');
-    }else if(par1 === 'all'){
-        Kitten.find(function(err,kittens){
-            console.log("answer: ",kittens);
-            res.json("answer: " + kittens);
-        });
-    }else if(par1 === 'name'){
-        Kitten.find({name:"Nibbles"},function(err, kittens){
-            console.log("answer: ",kittens);
-            res.json("answer: " + kittens);
-        });
-    }else if(par1 === 'and'){
-         Kitten.find({name:{$in:["Ladybug","Kitkat"]}},function(err, kittens){
-            console.log("answer: ",kittens);
-            res.json("answer: " + kittens);
-        });
-    }else if(par1 === 'or'){
-         Kitten.find({$or:[{name:"Ladybug"},{name:"Kitkat"}]},function(err, kittens){
-            console.log("answer: ",kittens);
-            res.json("answer: " + kittens);
-        });
-    }
-    
     //Here can the actual testings be performed
     if(par1 === 'act'){
-        
+        Model.findAll(function(err,cats){
+           res.json(cats);
+        });
     }
-    //
-    
+    // 
 });
-
-
 
 
 //==============================================================================
