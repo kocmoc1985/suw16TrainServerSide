@@ -22,9 +22,7 @@ module.exports = function(mongoose){
         age: age
     });
     //
-    cat.save(function(err,cat){
-        cb(err,cat);
-    });
+    cat.save(cb);
   };
   
   /**
