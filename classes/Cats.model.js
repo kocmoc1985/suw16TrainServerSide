@@ -1,9 +1,10 @@
 module.exports = function(mongoose){
 
-  // Mongoose Schema 
+  // Mongoose Schema, One-to-Few relation
   var shema = mongoose.Schema({
       name: String,
-      age: Number
+      age: Number,
+      addresses : Array
   });
   
 //  shema.set('autoIndex', true);
@@ -56,7 +57,8 @@ module.exports = function(mongoose){
        //
         var cat = new me({
             name: name, 
-            age: 0
+            age: 0,
+            addresses: []
         });
         //
         cat.save(function(err,cat){
@@ -81,6 +83,14 @@ module.exports = function(mongoose){
   
   /**
    * Use this one as a reminder
+   * OBS! OBS! find returns not a single object but an Array!!!
+   * 
+   * YourModel.find({ something: true }, function (err, docs) {
+   *   docs.forEach(function (doc) {
+   *   // do something
+   *   });
+   * });
+   * 
    * @tested
    */
   shema.statics.find_ = function(query,cb) {
@@ -143,9 +153,17 @@ module.exports = function(mongoose){
   shema.methods.getId = function(){
         return this._id.toString();
   };
+  
+  
+  shema.methods.addAdress = function(street,city,cc){
+        var newAddr = {street: street, city: city, cc:cc};
+        this.addresses.push(newAddr);
+        this.save();
+  };
+  
     
   shema.methods.toString = function(){
-        return "name: " + this.name + "  age: " + this.age + "  id: " + this._id.toString();
+        return "name: " + this.name + "  age: " + this.age + "  adresses: " + JSON.stringify(this.addresses) + "  id: " + this._id.toString();
   };
  
 /**
@@ -158,13 +176,13 @@ module.exports = function(mongoose){
  * @returns {nm$_Kitten.model.module.exports.shema.methods@call;model@call;find}
  */  
  shema.methods.findSimilarName = function(cb) {
-    return this.model('Kitten').find({ name: this.name }, cb);
+    return this.model('Cats').find({ name: this.name }, cb);
  };
  
   //================================</CLASS METHODS>==============================
 
   // Compile the schema to a model
   // it will result in a new collection in the database
-  Model = mongoose.model('Kitten', shema);
-  return Model;
+  Model = mongoose.model('Cats', shema);
+   return Model;
 };

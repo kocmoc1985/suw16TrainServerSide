@@ -42,7 +42,7 @@ var mongoose = require('mongoose');
 var catNames = require('./cats.json');
 var Model = require('./Cats.model')(mongoose);
 
-mongoose.connect('mongodb://10.87.0.145/test'); //mongodb://localhost/kittendb
+mongoose.connect('mongodb://localhost/test'); //mongodb://10.87.0.145/kittendb
 var db = mongoose.connection;
 
 db.once('open', function (){
@@ -59,8 +59,14 @@ function connected(){
        Model.createFromJsonWithNotify(catNames,function(err,resp){
            console.log("created: " + resp.toString());
            
-            Model.find_({name:{$in:["Zorro","Wizard"]}},function (err,resp){
-               console.log("done: " + resp.toString()); 
+            Model.find({name:{$in:["Zorro","Wizard"]}},function (err,docs){
+//               resp.addAdress("Sveagatan 19, 231-55","Trelleborg","SE"); 
+                 docs.forEach(function (doc){
+                     doc.addAdress("Sveagatan 19, 231-55","Trelleborg","SE");
+//                     doc.findSimilarName(function (doc){
+//                         console.log("similar: " + doc.toString());
+//                     });
+                 });
             });
            
        });
