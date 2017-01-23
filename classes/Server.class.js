@@ -53,7 +53,7 @@ var Model = require('./Cats.model')(mongoose);
 // localhost:3000/rest/model - get all
 // localhost:3000/rest/model/find/{name:"Zorro"}
 var Restrouter = require('./restrouter.class');
-new Restrouter(this.app,Model);
+new Restrouter(this.app,Model,"CatsRouter");
 
 mongoose.connect('mongodb://localhost/test'); //mongodb://10.87.0.145/kittendb
 var db = mongoose.connection;

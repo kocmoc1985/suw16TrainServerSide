@@ -1,21 +1,26 @@
 module.exports = class Restrouter {
   
-  constructor(expressApp,_class){
+  constructor(expressApp,_class,className){
 
     this.app = expressApp;
     this._class = _class;
     
     // get the class name
-    var className = _class.name;
+//    var className = _class.name;
+     var className = className;
+    
+    console.log("className: " + className);
     
     // for classes created with mongoosefromclass
     // we need to get the class name like this
-    if(_class.name == "model" && _class.orgClass){
-      className = _class.orgClass.name;
-    }
+//    if(_class.name == "model" && _class.orgClass){
+//       className = _class.orgClass.name;
+//       console.log("lkdladklas: " + className);
+//    }
     
     // a base rest route
     this.baseRoute = '/rest/' + className.toLowerCase() + '/';
+    console.log("baseRoute: " + this.baseRoute);
     
     // set up routes
     this.post();
@@ -28,11 +33,12 @@ module.exports = class Restrouter {
   post(){
 
     // Since "this" will change inside routes
-    var _class = this._class;
+    var model = this._class;
 
     // Create a new instance
     this.app.post(this.baseRoute,function(req,res){
-      var instance = new _class(req.body);
+      console.log(req.body);  
+      var instance = new model(req.body);
       instance.save(function(err,result){
         res.json(err || result);
       });
@@ -74,8 +80,8 @@ module.exports = class Restrouter {
 
     // Call a method of an instance
     this.app.get(this.baseRoute + ':id/:method',function(req,res){
-      _class.findOne({_id:req.params.id},function(err,result){
-        res.json(err || {returns:result[req.params.method]()});
+      _class.findOne({_id:req.params.id},function(err,doc){
+        res.json(err || {returns:doc[req.params.method]()});
       });
     });
  
@@ -83,7 +89,8 @@ module.exports = class Restrouter {
 
 
   put(){
-
+    // url: "http://localhost:3000/rest/catsrouter/find/{name:'Zorro'}"
+    //
     // Since "this" will change inside routes
     var _class = this._class;
 
