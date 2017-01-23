@@ -97,6 +97,10 @@ module.exports = function(mongoose){
     this.find(query,cb);
   };
   
+   shema.statics.findNameLike = function(like,cb) {
+     this.find({name: new RegExp('^'+like+'$', "i")},cb);
+  };
+  
    /**
   * Updates only one entry
   * Model.updateOne({name:"Zorro"},"Borro",function (err,resp){...
