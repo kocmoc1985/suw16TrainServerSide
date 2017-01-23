@@ -12,7 +12,6 @@ module.exports = class Restrouter {
     // we need to get the class name like this
     if(_class.name == "model" && _class.orgClass){
       className = _class.orgClass.name;
-      
     }
     
     // a base rest route

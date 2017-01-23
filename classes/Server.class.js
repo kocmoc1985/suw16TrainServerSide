@@ -50,7 +50,8 @@ var catNames = require('./cats.json');
 var Model = require('./Cats.model')(mongoose);
 
 //Link examples
-//localhost:3000/rest/model/find/{name:"Zorro"}
+// localhost:3000/rest/model - get all
+// localhost:3000/rest/model/find/{name:"Zorro"}
 var Restrouter = require('./restrouter.class');
 new Restrouter(this.app,Model);
 
