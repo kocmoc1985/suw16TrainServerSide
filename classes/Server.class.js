@@ -1,5 +1,7 @@
 'use strict';
 
+//require('./autoload');
+
 module.exports = class Server {
   constructor() {
     // save our settings to this
@@ -7,6 +9,11 @@ module.exports = class Server {
     
     // add express to this
     this.app = m.express();
+    
+    var bodyparser =  require('body-parser');
+    
+    this.app.use(bodyparser.json());
+    this.app.use(bodyparser.urlencoded({ extended: false }));
 
     // run the setup method
     this.setup();
@@ -41,6 +48,11 @@ module.exports = class Server {
 var mongoose = require('mongoose');
 var catNames = require('./cats.json');
 var Model = require('./Cats.model')(mongoose);
+
+//Link examples
+//localhost:3000/rest/model/find/{name:"Zorro"}
+var Restrouter = require('./restrouter.class');
+new Restrouter(this.app,Model);
 
 mongoose.connect('mongodb://localhost/test'); //mongodb://10.87.0.145/kittendb
 var db = mongoose.connection;
