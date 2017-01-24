@@ -2,9 +2,9 @@ module.exports = function(mongoose){
 
   // Mongoose Schema, One-to-Few relation
   var shema = mongoose.Schema({
-      name: String,
-      age: Number,
-      addresses : Array
+      name: {type:String,required: true},
+      age: {type:Number,max:25},
+      addresses : [{street: String, city: String, cc:String}]
   });
   
 //  shema.set('autoIndex', true);
@@ -162,6 +162,11 @@ module.exports = function(mongoose){
   shema.methods.addAdress = function(street,city,cc){
         var newAddr = {street: street, city: city, cc:cc};
         this.addresses.push(newAddr);
+        this.save();
+  };
+  
+  shema.methods.addAdressB = function(props){
+        this.addresses.push(props);
         this.save();
   };
   

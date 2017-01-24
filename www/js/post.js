@@ -8,8 +8,9 @@ function addListenerPostBtn() {
         $.ajax({
             async: true,
             type: "POST",
+            dataType: "json",
             url: "http://localhost:3000/rest/catsrouter",
-            data: {name: "AAAAAACAT", age: 55, addresses: [{street: "street", city: "city", cc:"cc"}]},
+            data: {name: "NEWCAT", age: 55, addresses: [{street: "street", city: "city", cc:"cc"}]},
             success: function (data, textStatus, jqXHR) {
                 $('#output').text(JSON.stringify(data));
             },

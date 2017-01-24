@@ -1,3 +1,23 @@
+function nodeServerCallAsyncProps(properties) {
+    $.ajax({
+        async: true,
+        type: 'POST',
+        dataType: 'json',
+        url: "http://localhost:3000/readMessages",
+        data: properties,
+        success: function (jsonMessages) {
+            //
+            jsonMessages.forEach(function (message) {
+                //do something
+            });
+            //
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            //do something
+        }
+    });
+}
+
 function nodeServerCallAsync() {
     $.ajax({
         async: true,
@@ -11,7 +31,6 @@ function nodeServerCallAsync() {
                 //do something
             });
             //
-            read();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             //do something
