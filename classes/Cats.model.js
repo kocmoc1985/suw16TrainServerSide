@@ -165,11 +165,6 @@ module.exports = function(mongoose){
         this.save();
   };
   
-  shema.methods.addAdressB = function(props){
-        this.addresses.push(props);
-        this.save();
-  };
-  
     
   shema.methods.toString = function(){
         return "name: " + this.name + "  age: " + this.age + "  adresses: " + JSON.stringify(this.addresses) + "  id: " + this._id.toString();

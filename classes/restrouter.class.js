@@ -37,7 +37,9 @@ module.exports = class Restrouter {
 
     // Create a new instance
     this.app.post(this.baseRoute,function(req,res){
+        
       console.log(req.body);  
+      
       var instance = new model(req.body);
       instance.save(function(err,result){
         res.json(err || result);

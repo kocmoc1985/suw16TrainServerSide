@@ -72,12 +72,11 @@ function connected(){
        Model.createFromJsonWithNotify(catNames,function(err,resp){
            console.log("created: " + resp.toString());
            
-//            Model.find({name:{$in:["Zorro","Wizard"]}},function (err,docs){
-//                 docs.forEach(function (doc){
-//                     doc.addAdress("Sveagatan 19, 231-55","Trelleborg","SE");
-//                     
-//                 });
-//            });
+            Model.find({name:{$in:["Zorro","Wizard"]}},function (err,docs){
+                 docs.forEach(function (doc){
+                     doc.addAdress("Sveagatan 19, 231-55","Trelleborg","SE");                   
+                 });
+            });
            
        });
        //
