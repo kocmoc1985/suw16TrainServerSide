@@ -1,25 +1,73 @@
 class Base {
-    
+
     constructor() {
         Base.co = Base.co || 0;
-        Base.co++;
         this.instanceId = Base.co;
-        
-        return new Proxy(this, ProxyHandler);
+
+        this.watchers = [];
+
+        let proxy = new Proxy(this, ProxyHandler);
+
+        Base.mem = Base.mem || [];
+        Base.mem[Base.co] = this;
+        Base.co++;
+        return proxy;
     }
-    
-    static addToMem(){
-        this.mem = this.mem || {};
+
+    //called by: person.class
+    watch(propToWatch, funcToRun) {
+
+        this.watchers.push({
+            propToWatch: propToWatch,
+            funcToRun: funcToRun
+        });
     }
-    
-    display(selector){
+
+    //called by: proxyhandler
+    callWatchers(propName, val, oldVal) {
+        var okToChange = true;
+        for (let watcher of this.watchers) {
+            if (propName == watcher.propToWatch) {
+                if (watcher.funcToRun(val, oldVal) === false) {
+                    okToChange = false;
+                }
+            }
+        }
+        return okToChange;
+    }
+
+    //
+    display(selector) {
         let template = $(this.template || '');
-        $(template).attr('data-instance-id',this.instanceId);
+        $(template).attr('data-instance-id', this.instanceId);
+        let html = $('<div/>').append(template).html();
         $(selector).append(template);
+        return html;
     }
-    
-    displayUpdate(){
-        console.log("update display:",this.template);
-        $('[data-instance-id="'+ this.instanceId + '"]').html(this.template || '');
+
+    //called by: proxyhandler
+    displayUpdate() {
+        var that = this;
+        clearTimeout(this.updateRun);
+        this.updateRun = setTimeout(function () {
+            $('[data-instance-id="' + that.instanceId + '"]').html($(that.template).html() || '');
+        }, 50);
+        
+//          $('[data-instance-id="' + this.instanceId + '"]').html(this.template || '');
     }
+
+    get template() {
+        //Check what class this instance comes from
+        let myClass = this.constructor;
+        //Retrieve the static method templateFunc
+        let func = myClass.templateFunc || function () {};
+        //run the function with this instance as "this"
+        return func.apply(this);
+    }
+
+    static registerTemplate(func) {
+        //this here is whole Person, because it's static method
+        this.templateFunc = func;
+    }
+
 }

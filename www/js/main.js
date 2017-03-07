@@ -2,12 +2,10 @@
 let a;
 let b;
 
-$(document).ready(function () {
-     a = new Person('Anna',25);
-     b = new Person('Peter',54);
-    
-     a.display('#main-content');    
-});
+
+let list_a = new List();
+list_a.push("aaa");
+
 
 //Executes last
 //$(window).load(function () {
