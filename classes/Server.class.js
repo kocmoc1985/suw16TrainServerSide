@@ -176,7 +176,7 @@ function answer(){
     //
     responseObjectsMap.each(function (key,value,i){
         //
-        console.log("answer(): key: " + key + " / last: " + value.lastmsgnr + " / i: " + i)
+        console.log("answer(): key: " + key + " / last: " + value.lastmsgnr + " / i: " + i);
         //
         if(msgCounter > value.lastmsgnr){
             //
