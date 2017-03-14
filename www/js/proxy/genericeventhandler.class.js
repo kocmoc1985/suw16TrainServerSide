@@ -15,7 +15,7 @@ class GenericEventHandler {
 
         $(document).on(
                 'click mousemove mouseenter mouseleave ' +
-                'keydown keyup keypress submit',
+                'keydown keyup keypress submit change',
                 '*',
                 function (e) {
                     let el = $(this);

@@ -52,8 +52,6 @@ class Base {
         this.updateRun = setTimeout(function () {
             $('[data-instance-id="' + that.instanceId + '"]').html($(that.template).html() || '');
         }, 50);
-        
-//          $('[data-instance-id="' + this.instanceId + '"]').html(this.template || '');
     }
 
     get template() {
